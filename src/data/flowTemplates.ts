@@ -193,5 +193,125 @@ export const flowTemplates: FlowTemplate[] = [
       { id: 'e2-3', source: 'approval-1', target: 'integration-1' },
       { id: 'e3-4', source: 'integration-1', target: 'cobranca-1' }
     ]
+  },
+  {
+    id: 'complete-split-flow',
+    name: 'Fluxo Completo com Split',
+    description: 'Fluxo completo com split de pagamento, sub contas e aprovação',
+    category: 'Avançado',
+    thumbnail: 'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=400',
+    complexity: 'Avançado',
+    estimatedTime: '20 min',
+    tags: ['Split', 'Sub Account', 'Aprovação', 'Email'],
+    nodes: [
+      {
+        id: 'trigger-1',
+        type: 'custom',
+        position: { x: 350, y: 50 },
+        data: {
+          label: 'Acionador',
+          description: 'Ativa o processo de checkout',
+          icon: 'Play',
+          color: '#4F46E5'
+        }
+      },
+      {
+        id: 'cobranca-1',
+        type: 'custom',
+        position: { x: 350, y: 180 },
+        data: {
+          label: 'Cobrança',
+          description: 'Geração de invoice',
+          icon: 'CreditCard',
+          color: '#3B82F6'
+        }
+      },
+      {
+        id: 'split-1',
+        type: 'split',
+        position: { x: 350, y: 320 },
+        data: {
+          label: 'Split de Pagamento',
+          description: 'Split do valor da cobrança percentual',
+          icon: 'GitBranch',
+          color: '#3B82F6',
+          config: {
+            splits: [
+              { id: '1', percentage: 70, destination: 'Sub Account 1', description: '70% do valor' },
+              { id: '2', percentage: 30, destination: 'Sub Account 2', description: '30% do valor' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'subaccount-1',
+        type: 'custom',
+        position: { x: -60, y: 470 },
+        data: {
+          label: 'Sub Account (70%)',
+          description: 'Conta principal de recebimento',
+          icon: 'Building2',
+          color: '#FF6B00'
+        }
+      },
+      {
+        id: 'subaccount-2',
+        type: 'custom',
+        position: { x: 760, y: 470 },
+        data: {
+          label: 'Sub Account (30%)',
+          description: 'Conta secundária de recebimento',
+          icon: 'Building2',
+          color: '#FF6B00'
+        }
+      },
+      {
+        id: 'email-1',
+        type: 'custom',
+        position: { x: 350, y: 700 },
+        data: {
+          label: 'Email',
+          description: 'Envio de notificação por e-mail',
+          icon: 'Mail',
+          color: '#10B981'
+        }
+      },
+      {
+        id: 'approval-1',
+        type: 'custom',
+        position: { x: 350, y: 900 },
+        data: {
+          label: 'Aprovação',
+          description: 'Solicita aprovação manual do processo',
+          icon: 'CheckCircle',
+          color: '#EF4444'
+        }
+      }
+    ],
+    edges: [
+      { id: 'e1-2', source: 'trigger-1', target: 'cobranca-1' },
+      { id: 'e2-3', source: 'cobranca-1', target: 'split-1' },
+      { 
+        id: 'e3-4', 
+        source: 'split-1', 
+        sourceHandle: '1',
+        target: 'subaccount-1',
+        label: '70%',
+        style: { stroke: '#3B82F6', strokeWidth: 2 },
+        labelStyle: { fontSize: 12, fontWeight: 'bold', fill: '#3B82F6' }
+      },
+      { 
+        id: 'e3-5', 
+        source: 'split-1', 
+        sourceHandle: '2',
+        target: 'subaccount-2',
+        label: '30%',
+        style: { stroke: '#3B82F6', strokeWidth: 2 },
+        labelStyle: { fontSize: 12, fontWeight: 'bold', fill: '#3B82F6' }
+      },
+      { id: 'e4-6', source: 'subaccount-1', target: 'email-1' },
+      { id: 'e5-6', source: 'subaccount-2', target: 'email-1' },
+      { id: 'e6-7', source: 'email-1', target: 'approval-1' }
+    ]
   }
 ];

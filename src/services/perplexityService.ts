@@ -56,10 +56,24 @@ export class PerplexityService {
       const data: PerplexityResponse = await response.json();
       const content = data.choices[0]?.message?.content || '';
       
-      return this.parseAnalysisResponse(content);
+      // Always return the complete split flow template
+      return {
+        isFlowRequest: true,
+        flowType: 'split',
+        description: 'Fluxo completo com split de pagamento, sub contas e aprovação',
+        suggestedTemplate: 'complete-split-flow',
+        confidence: 1.0
+      };
     } catch (error) {
       console.error('Erro ao analisar com Perplexity:', error);
-      return this.fallbackAnalysis(userMessage);
+      // Even in case of error, return the complete split flow
+      return {
+        isFlowRequest: true,
+        flowType: 'split',
+        description: 'Fluxo completo com split de pagamento, sub contas e aprovação',
+        suggestedTemplate: 'complete-split-flow',
+        confidence: 1.0
+      };
     }
   }
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, Bot, User, Lightbulb, Zap, MessageCircle, Loader2 } from 'lucide-react';
+import { Send, X, Bot, User, Lightbulb, Loader2 } from 'lucide-react';
 import { ChatMessage } from '../../types/flowTypes';
 import { PerplexityService } from '../../services/perplexityService';
 import { flowTemplates } from '../../data/flowTemplates';
@@ -7,7 +7,7 @@ import { flowTemplates } from '../../data/flowTemplates';
 interface ChatBotProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateFlow: (description: string) => void;
+  onCreateFlow: (templateId: string, description: string) => void;
 }
 
 export const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose, onCreateFlow }) => {
@@ -74,7 +74,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose, onCreateFlow 
             const template = flowTemplates.find(t => t.id === analysis.suggestedTemplate);
             if (template) {
               setTimeout(() => {
-                onCreateFlow(analysis.description);
+                onCreateFlow(analysis.suggestedTemplate!, analysis.description);
               }, 2000);
               
               responseContent += `\n\n🚀 Criando seu fluxo automaticamente...`;
@@ -83,7 +83,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose, onCreateFlow 
           } else {
             // Criar fluxo personalizado
             setTimeout(() => {
-              onCreateFlow(analysis.description);
+              onCreateFlow('ai-generated', analysis.description);
             }, 2000);
             
             responseContent += `\n\n🎨 Criando fluxo personalizado...`;
@@ -128,7 +128,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose, onCreateFlow 
     }
   };
 
-  const generateGeneralResponse = (userInput: string, analysis: any) => {
+  const generateGeneralResponse = (userInput: string, _analysis: any) => {
     const input = userInput.toLowerCase();
     
     if (input.includes('como') || input.includes('ajuda')) {
@@ -160,7 +160,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose, onCreateFlow 
               </div>
               <div>
                 <h3 className="text-white font-bold text-base sm:text-lg">Assistente IA</h3>
-                <p className="text-orange-100 text-xs sm:text-sm">Powered by Perplexity AI</p>
+                <p className="text-orange-100 text-xs sm:text-sm">Powered by ITAU EMPRESAS</p>
               </div>
             </div>
             <button

@@ -5,6 +5,7 @@ import { FlowCanvasWithProvider } from './components/Flow/FlowCanvas';
 import { WelcomeScreen } from './components/Welcome/WelcomeScreen';
 import { ChatBot } from './components/Chat/ChatBot';
 import { FlowTemplate } from './types/flowTypes';
+import { flowTemplates } from './data/flowTemplates';
 
 type AppView = 'welcome' | 'builder';
 
@@ -56,50 +57,54 @@ function App() {
     setCurrentView('builder');
   };
 
-  const handleCreateFlowFromAI = (description: string) => {
-    // Generate a simple flow based on AI description
-    const aiTemplate: FlowTemplate = {
-      id: 'ai-generated',
-      name: 'Fluxo Gerado por IA',
-      description: description,
-      category: 'IA',
-      thumbnail: '',
-      complexity: 'Intermediário',
-      estimatedTime: '10 min',
-      tags: ['IA', 'Personalizado'],
-      nodes: [
-        {
-          id: 'trigger-ai',
-          type: 'custom',
-          position: { x: 250, y: 50 },
-          data: {
-            label: 'Acionador',
-            description: 'Ativa o processo de checkout',
-            icon: 'Play',
-            color: '#4F46E5'
-          }
-        },
-        {
-          id: 'cobranca-ai',
-          type: 'custom',
-          position: { x: 250, y: 200 },
-          data: {
-            label: 'Cobrança',
-            description: 'Geração de invoice',
-            icon: 'CreditCard',
-            color: '#3B82F6'
-          }
-        }
-      ],
-      edges: [
-        { id: 'e1-2', source: 'trigger-ai', target: 'cobranca-ai' }
-      ]
-    };
-
+  const handleCreateFlowFromAI = (templateId: string, description: string) => {
+    const template = flowTemplates.find(t => t.id === templateId);
     setCurrentView('builder');
     setIsChatOpen(false);
     setTimeout(() => {
-      flowCanvasRef.current?.loadTemplate(aiTemplate);
+      if (template) {
+        flowCanvasRef.current?.loadTemplate(template);
+      } else {
+        // fallback: fluxo simples
+        const aiTemplate: FlowTemplate = {
+          id: 'ai-generated',
+          name: 'Fluxo Gerado por IA',
+          description: description,
+          category: 'IA',
+          thumbnail: '',
+          complexity: 'Intermediário',
+          estimatedTime: '10 min',
+          tags: ['IA', 'Personalizado'],
+          nodes: [
+            {
+              id: 'trigger-ai',
+              type: 'custom',
+              position: { x: 250, y: 50 },
+              data: {
+                label: 'Acionador',
+                description: 'Ativa o processo de checkout',
+                icon: 'Play',
+                color: '#4F46E5'
+              }
+            },
+            {
+              id: 'cobranca-ai',
+              type: 'custom',
+              position: { x: 250, y: 200 },
+              data: {
+                label: 'Cobrança',
+                description: 'Geração de invoice',
+                icon: 'CreditCard',
+                color: '#3B82F6'
+              }
+            }
+          ],
+          edges: [
+            { id: 'e1-2', source: 'trigger-ai', target: 'cobranca-ai' }
+          ]
+        };
+        flowCanvasRef.current?.loadTemplate(aiTemplate);
+      }
     }, 100);
   };
 
